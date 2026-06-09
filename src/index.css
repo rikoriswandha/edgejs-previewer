@@ -1,3 +1,4 @@
+@import "tailwindcss";
 @import "@fontsource-variable/inter";
 
 @font-face {
@@ -9,63 +10,55 @@
     font-display: swap;
 }
 
-@tailwind base;
-
 @custom-variant dark (&:is(.dark *));
-@tailwind components;
-@tailwind utilities;
 
 :root {
-    --destructive-foreground: var(--color-red-700);
-    --info: var(--color-blue-500);
-    --info-foreground: var(--color-blue-700);
-    --success: var(--color-emerald-500);
-    --success-foreground: var(--color-emerald-700);
-    --warning: var(--color-amber-500);
-    --warning-foreground: var(--color-amber-700);
+    --destructive-foreground: #991b1b;
+    --info: #0284c7;
+    --info-foreground: #0369a1;
+    --success: #16a34a;
+    --success-foreground: #15803d;
+    --warning: #d97706;
+    --warning-foreground: #b45309;
     --accent: --alpha(var(--color-black) / 4%);
     --accent-foreground: var(--color-neutral-800);
-    --background: var(--color-white);
+    --background: #fdfcfa;
     --border: --alpha(var(--color-black) / 8%);
     --card: var(--color-white);
-    --card-foreground: var(--color-neutral-800);
-    --destructive: var(--color-red-500);
-    --foreground: var(--color-neutral-800);
+    --card-foreground: #2a2522;
+    --destructive: #dc4446;
+    --foreground: #2a2522;
     --input: --alpha(var(--color-black) / 10%);
-    --muted: --alpha(var(--color-black) / 4%);
-    --muted-foreground: color-mix(
-        in srgb,
-        var(--color-neutral-500) 90%,
-        var(--color-black)
-    );
+    --muted: #f0ebe5;
+    --muted-foreground: #8a7f76;
     --popover: var(--color-white);
-    --popover-foreground: var(--color-neutral-800);
-    --primary: var(--color-neutral-800);
-    --primary-foreground: var(--color-neutral-50);
-    --ring: var(--color-neutral-400);
-    --secondary: --alpha(var(--color-black) / 4%);
-    --secondary-foreground: var(--color-neutral-800);
-    --chart-1: var(--color-orange-600);
-    --chart-2: var(--color-teal-600);
-    --chart-3: var(--color-cyan-900);
-    --chart-4: var(--color-amber-400);
-    --chart-5: var(--color-amber-500);
-    --code: var(--color-white);
-    --code-foreground: var(--foreground);
+    --popover-foreground: #2a2522;
+    --primary: #e85d3e;
+    --primary-foreground: #ffffff;
+    --ring: #e85d3e;
+    --secondary: #f5f0eb;
+    --secondary-foreground: #3d3530;
+    --chart-1: #e85d3e;
+    --chart-2: #059669;
+    --chart-3: #0284c7;
+    --chart-4: #d97706;
+    --chart-5: #7c3aed;
+    --code: #fdfcfa;
+    --code-foreground: #2a2522;
     --code-highlight: --alpha(var(--color-black) / 4%);
-    --radius: 0.625rem;
-    --sidebar: var(--color-neutral-50);
+    --radius: 0.75rem;
+    --sidebar: #f5f0eb;
     --sidebar-accent: --alpha(var(--color-black) / 4%);
-    --sidebar-accent-foreground: var(--color-neutral-800);
+    --sidebar-accent-foreground: #2a2522;
     --sidebar-border: --alpha(var(--color-black) / 6%);
     --sidebar-foreground: color-mix(
         in srgb,
         var(--color-neutral-800) 64%,
         var(--sidebar)
     );
-    --sidebar-primary: var(--color-neutral-800);
-    --sidebar-primary-foreground: var(--color-neutral-50);
-    --sidebar-ring: var(--color-neutral-400);
+    --sidebar-primary: #2a2522;
+    --sidebar-primary-foreground: #f5f0eb;
+    --sidebar-ring: #e85d3e;
 }
 
 body {
@@ -216,67 +209,52 @@ body {
 }
 
 .dark {
-    --destructive-foreground: var(--color-red-400);
-    --info: var(--color-blue-500);
-    --info-foreground: var(--color-blue-400);
-    --success: var(--color-emerald-500);
-    --success-foreground: var(--color-emerald-400);
-    --warning: var(--color-amber-500);
-    --warning-foreground: var(--color-amber-400);
+    --destructive-foreground: #fca5a5;
+    --info: #38bdf8;
+    --info-foreground: #7dd3fc;
+    --success: #4ade80;
+    --success-foreground: #86efac;
+    --warning: #fbbf24;
+    --warning-foreground: #fde047;
     --accent: --alpha(var(--color-white) / 4%);
-    --accent-foreground: var(--color-neutral-100);
-    --background: color-mix(
-        in srgb,
-        var(--color-neutral-950) 95%,
-        var(--color-white)
-    );
+    --accent-foreground: #f2ede8;
+    --background: #1c1917;
     --border: --alpha(var(--color-white) / 6%);
-    --card: color-mix(in srgb, var(--background) 98%, var(--color-white));
-    --card-foreground: var(--color-neutral-100);
-    --destructive: color-mix(
-        in srgb,
-        var(--color-red-500) 90%,
-        var(--color-white)
-    );
-    --foreground: var(--color-neutral-100);
+    --card: #25221f;
+    --card-foreground: #f2ede8;
+    --destructive: #ef5350;
+    --destructive-foreground: #1c1917;
+    --foreground: #f2ede8;
     --input: --alpha(var(--color-white) / 8%);
-    --muted: --alpha(var(--color-white) / 4%);
-    --muted-foreground: color-mix(
-        in srgb,
-        var(--color-neutral-500) 90%,
-        var(--color-white)
-    );
-    --popover: color-mix(in srgb, var(--background) 98%, var(--color-white));
-    --popover-foreground: var(--color-neutral-100);
-    --primary: var(--color-neutral-100);
-    --primary-foreground: var(--color-neutral-800);
-    --ring: var(--color-neutral-500);
-    --secondary: --alpha(var(--color-white) / 4%);
-    --secondary-foreground: var(--color-neutral-100);
-    --chart-1: var(--color-blue-700);
-    --chart-2: var(--color-emerald-500);
-    --chart-3: var(--color-amber-500);
-    --chart-4: var(--color-purple-500);
-    --chart-5: var(--color-rose-500);
-    --code: color-mix(in srgb, var(--background) 98%, var(--color-white));
-    --code-foreground: var(--foreground);
+    --muted: #2d2926;
+    --muted-foreground: #9a9086;
+    --popover: #25221f;
+    --popover-foreground: #f2ede8;
+    --primary: #f08060;
+    --primary-foreground: #1c1917;
+    --ring: #f08060;
+    --secondary: #2d2926;
+    --secondary-foreground: #e8e2da;
+    --chart-1: #f08060;
+    --chart-2: #4ade80;
+    --chart-3: #38bdf8;
+    --chart-4: #fbbf24;
+    --chart-5: #a78bfa;
+    --code: #25221f;
+    --code-foreground: #f2ede8;
     --code-highlight: --alpha(var(--color-white) / 4%);
-    --sidebar: color-mix(
-        in srgb,
-        var(--color-neutral-950) 97%,
-        var(--color-white)
-    );
+    --sidebar: #25221f;
     --sidebar-accent: --alpha(var(--color-white) / 4%);
-    --sidebar-accent-foreground: var(--color-neutral-100);
+    --sidebar-accent-foreground: #f2ede8;
     --sidebar-border: --alpha(var(--color-white) / 5%);
     --sidebar-foreground: color-mix(
         in srgb,
         var(--color-neutral-100) 64%,
         var(--sidebar)
     );
-    --sidebar-primary: var(--color-neutral-100);
-    --sidebar-primary-foreground: var(--color-neutral-800);
-    --sidebar-ring: var(--color-neutral-400);
+    --sidebar-primary: #f2ede8;
+    --sidebar-primary-foreground: #1c1917;
+    --sidebar-ring: #f08060;
 }
 
 @layer base {

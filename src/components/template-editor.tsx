@@ -1,26 +1,46 @@
 import Editor from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
+import { useCallback } from "react";
+import { useMonacoTheme } from "@/hooks/use-monaco-theme";
 
 interface TemplateEditorProps {
   value: string;
   onChange: (value: string) => void;
+  isDark: boolean;
 }
 
-export function TemplateEditor({ value, onChange }: TemplateEditorProps) {
+export function TemplateEditor({ value, onChange, isDark }: TemplateEditorProps) {
+  const { applyTheme } = useMonacoTheme();
+
   const handleChange = (newValue: string | undefined) => {
     onChange(newValue ?? "");
   };
 
-  const handleMount = (monacoEditor: editor.IStandaloneCodeEditor) => {
-    monacoEditor.updateOptions({
-      minimap: { enabled: false },
-      scrollBeyondLastLine: false,
-      fontSize: 14,
-      lineNumbers: "on",
-      folding: true,
-      wordWrap: "on",
-    });
-  };
+  const handleMount = useCallback(
+    (monacoEditor: editor.IStandaloneCodeEditor) => {
+      monacoEditor.updateOptions({
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        fontSize: 14,
+        lineNumbers: "on",
+        folding: true,
+        wordWrap: "on",
+        padding: { top: 12, bottom: 12 },
+        renderLineHighlight: "line",
+        scrollbar: {
+          useShadows: false,
+          verticalScrollbarSize: 8,
+          horizontalScrollbarSize: 8,
+        },
+        overviewRulerLanes: 0,
+        hideCursorInOverviewRuler: true,
+        automaticLayout: true,
+      });
+
+      applyTheme(monacoEditor, isDark);
+    },
+    [applyTheme, isDark],
+  );
 
   return (
     <Editor
@@ -29,10 +49,8 @@ export function TemplateEditor({ value, onChange }: TemplateEditorProps) {
       value={value}
       onChange={handleChange}
       onMount={handleMount}
-      theme="vs-dark"
-      options={{
-        automaticLayout: true,
-      }}
+      theme={isDark ? "edge-warm-dark" : "edge-warm-light"}
+      options={{ automaticLayout: true }}
     />
   );
 }
