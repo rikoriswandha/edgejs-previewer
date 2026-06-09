@@ -105,6 +105,167 @@ export const PRESETS: Preset[] = [
       2,
     ),
   },
+  {
+    id: "bootstrap",
+    label: "Bootstrap",
+    template: `<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="container py-4">
+  <div class="alert alert-primary" role="alert">
+    Hello, <strong>{{ user.name }}</strong>! This is Bootstrap 5 loaded via inline CDN.
+  </div>
+
+  <div class="card">
+    <div class="card-header">Team Members</div>
+    <ul class="list-group list-group-flush">
+      @each(member in team)
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ member.name }}
+          <span class="badge bg-{{ member.status === 'active' ? 'success' : 'secondary' }} rounded-pill">
+            {{ member.status }}
+          </span>
+        </li>
+      @endeach
+    </ul>
+  </div>
+
+  <button type="button" class="btn btn-outline-primary mt-3" onclick="alert('Hello from inline script!')">
+    Click me
+  </button>
+</div>`,
+    state: JSON.stringify(
+      {
+        user: { name: "Edge Developer" },
+        team: [
+          { name: "Alice", status: "active" },
+          { name: "Bob", status: "away" },
+          { name: "Carol", status: "active" },
+        ],
+      },
+      null,
+      2,
+    ),
+  },
+  {
+    id: "bulma",
+    label: "Bulma",
+    template: `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css" />
+
+<section class="section">
+  <div class="container">
+    <h1 class="title is-3 has-text-primary">Hello, {{ user.name }}! 🎉</h1>
+    <p class="subtitle is-5">This template uses Bulma CSS via inline link tag.</p>
+
+    <div class="box">
+      <h2 class="title is-5">Tasks</h2>
+      @each(task in tasks)
+        <div class="notification is-{{ task.done ? 'success' : 'warning' }} is-light">
+          <label class="checkbox">
+            <input type="checkbox" {{ task.done ? 'checked' : '' }} disabled />
+            <strong>{{ task.title }}</strong>
+          </label>
+        </div>
+      @endeach
+    </div>
+  </div>
+</section>`,
+    state: JSON.stringify(
+      {
+        user: { name: "Bulma Fan" },
+        tasks: [
+          { title: "Set up Bulma CDN", done: true },
+          { title: "Write Edge template", done: true },
+          { title: "Deploy to production", done: false },
+        ],
+      },
+      null,
+      2,
+    ),
+  },
+  {
+    id: "picocss",
+    label: "Pico CSS",
+    template: `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+
+<main class="container">
+  <h1>Welcome, {{ name }}!</h1>
+  <p>Pico is a classless CSS framework. Just write semantic HTML — no classes needed.</p>
+
+  <article>
+    <header>User Preferences</header>
+    <form>
+      <label>
+        Username
+        <input type="text" value="{{ name }}" placeholder="Enter your name" />
+      </label>
+      <label>
+        Theme
+        <select>
+          @each(option in themes)
+            <option {{ option === theme ? 'selected' : '' }}>{{ option }}</option>
+          @endeach
+        </select>
+      </label>
+      <label>
+        <input type="checkbox" {{ newsletter ? 'checked' : '' }} />
+        Subscribe to newsletter
+      </label>
+    </form>
+  </article>
+
+  <details>
+    <summary>Debug Info</summary>
+    <pre><code>{{ JSON.stringify({ name, theme, newsletter }) }}</code></pre>
+  </details>
+</main>`,
+    state: JSON.stringify(
+      {
+        name: "Edge Explorer",
+        theme: "dark",
+        themes: ["light", "dark", "auto"],
+        newsletter: true,
+      },
+      null,
+      2,
+    ),
+  },
+  {
+    id: "vanilla-js",
+    label: "Inline JS",
+    template: `<div class="max-w-md mx-auto p-6 space-y-4">
+  <h1 class="text-2xl font-bold text-orange-600">Counter: <span id="count">{{ count }}</span></h1>
+
+  <div class="flex gap-2">
+    <button id="dec" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">−</button>
+    <button id="inc" class="px-3 py-1 bg-orange-500 text-white rounded hover:bg-orange-600">+</button>
+    <button id="reset" class="px-3 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200">Reset</button>
+  </div>
+
+  <p class="text-sm text-gray-500">
+    This example shows a vanilla inline script running inside the preview iframe.
+    The script reads the initial count from the rendered DOM and updates it interactively.
+  </p>
+</div>
+
+<script>
+  (function () {
+    var countEl = document.getElementById('count');
+    var count = parseInt(countEl.textContent, 10) || 0;
+
+    function update(n) {
+      count = n;
+      countEl.textContent = count;
+      countEl.style.color = count > 0 ? '#16a34a' : count < 0 ? '#dc2626' : '#ea580c';
+    }
+
+    document.getElementById('inc').addEventListener('click', function () { update(count + 1); });
+    document.getElementById('dec').addEventListener('click', function () { update(count - 1); });
+    document.getElementById('reset').addEventListener('click', function () { update(0); });
+  })();
+  </script>`,
+    state: JSON.stringify({ count: 5 }, null, 2),
+  },
 ];
 
 interface PresetSelectorProps {
