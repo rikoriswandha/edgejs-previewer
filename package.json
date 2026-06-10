@@ -1,13 +1,40 @@
 {
   "name": "edgejs-previewer",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "A browser-based playground for writing Edge.js templates and previewing the rendered output with live JSON state.",
   "type": "module",
+  "license": "MIT",
+  "author": "Riko Riswandha <rikoriswandha@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rikoriswandha/edgejs-previewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rikoriswandha/edgejs-previewer/issues"
+  },
+  "homepage": "https://github.com/rikoriswandha/edgejs-previewer#readme",
+  "keywords": [
+    "edge.js",
+    "adonisjs",
+    "template-engine",
+    "playground",
+    "edge",
+    "templating",
+    "preview",
+    "vite",
+    "react",
+    "typescript"
+  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "bun": ">=1.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "start": "node server.js",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -16,6 +43,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "edge.js": "^6.5.1",
+    "express": "^5.2.1",
     "geist": "^1.7.2",
     "lucide-react": "^1.17.0",
     "react": "^18.2.0",
@@ -24,6 +52,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.0",
+    "@types/express": "^5.0.6",
     "@types/node": "^25.9.2",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",

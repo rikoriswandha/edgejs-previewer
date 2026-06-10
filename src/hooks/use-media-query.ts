@@ -30,7 +30,7 @@ function resolveMax(value: Breakpoint | number): string {
 }
 
 function parseQuery(
-  query: BreakpointQuery | MediaQueryInput | (string & {}),
+  query: BreakpointQuery | MediaQueryInput | string,
 ): string {
   if (typeof query !== "string") {
     const parts: string[] = [];
@@ -69,7 +69,7 @@ export type MediaQueryInput = {
 };
 
 export function useMediaQuery(
-  query: BreakpointQuery | MediaQueryInput | (string & {}),
+  query: BreakpointQuery | MediaQueryInput | string,
 ): boolean {
   const mediaQuery = parseQuery(query);
 

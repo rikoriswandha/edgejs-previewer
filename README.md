@@ -1,30 +1,182 @@
-# React + TypeScript + Vite
+# Edge.js Previewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A browser-based playground for writing [Edge.js](https://edgejs.dev/) templates and previewing the rendered output with live JSON state. No server setup required for development — just write templates, edit state, and see results instantly.
 
-Currently, two official plugins are available:
+> **Friendly, approachable, and encouraging.** Built for developers learning AdonisJS templating who want immediate visual feedback.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Live template editor** with syntax-highlighted Monaco Editor
+- **Real-time JSON state editor** with validation feedback
+- **Instant preview** rendered in a sandboxed iframe with Tailwind CSS
+- **Built-in examples** — switch between Hello World, Conditionals, Loops, Components, and more
+- **Dark & light themes** with warm, accessible color palettes
+- **Component authoring** — define and register reusable Edge components inline
+- **Helpful error states** — compilation errors are shown inline with guidance
+- **Debounced compilation** — performance-optimized updates as you type
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) |
+| Build Tool | [Vite](https://vitejs.dev/) |
+| Styling | [Tailwind CSS v4](https://tailwindcss.com/) |
+| UI Primitives | [@base-ui/react](https://base-ui.com/) + [shadcn/ui](https://ui.shadcn.com/) |
+| Editor | [Monaco Editor](https://microsoft.github.io/monaco-editor/) (via `@monaco-editor/react`) |
+| Template Engine | [Edge.js](https://edgejs.dev/) |
+| Runtime | [Node.js](https://nodejs.org/) ≥ 20 / [Bun](https://bun.sh/) ≥ 1.0 |
+| Server | [Express](https://expressjs.com/) (production) |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) ≥ 20 or [Bun](https://bun.sh/) ≥ 1.0
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/rikoriswandha/edgejs-previewer.git
+cd edgejs-previewer
+
+# Install dependencies
+bun install
+
+# Start the development server
+bun run dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Development Notes
+
+The Vite dev server uses a custom plugin (`src/plugin/edge-compiler.ts`) to handle Edge.js template compilation at `/api/compile`. This provides fast feedback during development without a separate backend process.
+
+---
+
+## Building for Production
+
+```bash
+bun run build
+```
+
+This generates a static bundle in the `dist/` directory.
+
+### Running the Production Server
+
+The included Express server serves the built static files and provides the `/api/compile` endpoint required by the app.
+
+```bash
+bun run start
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Deployment
+
+### Docker
+
+Build and run with Docker:
+
+```bash
+# Build the image
+docker build -t edgejs-previewer .
+
+# Run the container
+docker run -p 3000:3000 edgejs-previewer
+```
+
+### Node.js Hosting (Railway, Render, Fly.io, etc.)
+
+1. Push your code to a Git repository.
+2. Connect the repository to your hosting platform.
+3. Set the **build command** to `bun run build`.
+4. Set the **start command** to `bun run start` or `node server.js`.
+5. Ensure the platform exposes port `3000` (or set `PORT` environment variable).
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `3000` | Port the Express server listens on |
+
+---
+
+## Project Structure
+
+```
+.
+├── .github/workflows/      # CI/CD workflows
+├── src/
+│   ├── components/
+│   │   ├── ui/             # shadcn/ui components
+│   │   ├── edge-previewer.tsx    # Main playground layout
+│   │   ├── template-editor.tsx   # Edge template Monaco editor
+│   │   ├── state-editor.tsx      # JSON state Monaco editor
+│   │   ├── output-panel.tsx      # Rendered preview iframe
+│   │   ├── preset-selector.tsx   # Example preset buttons
+│   │   ├── component-editor.tsx  # Inline component editor
+│   │   ├── status-bar.tsx        # Compilation status bar
+│   │   └── preset-data.ts        # Built-in example presets
+│   ├── hooks/
+│   │   ├── use-edge-compiler.ts  # Compile API client
+│   │   ├── use-monaco-theme.ts   # Custom warm editor themes
+│   │   └── use-media-query.ts    # Responsive breakpoint hook
+│   ├── plugin/
+│   │   └── edge-compiler.ts      # Vite dev server plugin
+│   ├── lib/
+│   │   └── utils.ts              # cn() class merger
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css                 # Tailwind v4 theme tokens
+├── server.js                 # Express production server
+├── Dockerfile
+├── vite.config.ts
+├── tsconfig.json
+├── tailwind.config.js
+├── package.json
+└── README.md
+```
+
+---
+
+## Contributing
+
+Contributions are welcome! Please feel free to open an issue or submit a pull request.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please ensure your code passes linting and type checking:
+
+```bash
+bun run lint
+bun run build
+```
+
+---
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
+
+---
+
+## Acknowledgments
+
+- [Edge.js](https://edgejs.dev/) — the elegant templating engine by the AdonisJS team
+- [shadcn/ui](https://ui.shadcn.com/) and [@coss/style](https://github.com/cossssssssss/ui) for the component system
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) for the best-in-class code editing experience
