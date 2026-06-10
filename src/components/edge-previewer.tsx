@@ -151,11 +151,9 @@ export function EdgePreviewer() {
       {/* Header */}
       <header className="flex items-center justify-between border-b bg-card px-4 py-2.5">
         <div className="flex items-center gap-3">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Zap className="size-4" />
-          </div>
+          <img src="/favicon.svg" alt="Edge.js Previewer" className="size-8 rounded-lg" />
           <div>
-            <h1 className="text-sm font-semibold leading-tight">Edge.js Playground</h1>
+            <h1 className="text-sm font-semibold leading-tight">Edge.js Previewer</h1>
             <p className="text-muted-foreground text-xs">Learn Edge templating interactively</p>
           </div>
         </div>
