@@ -10,6 +10,7 @@ import { PresetSelector } from "@/components/preset-selector";
 import { type Preset } from "@/components/preset-data";
 import { StatusBar } from "@/components/status-bar";
 import { ComponentEditor } from "@/components/component-editor";
+import { DocsSidebar } from "@/components/docs-sidebar";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_TEMPLATE = `<h1 class="text-3xl font-bold text-orange-600">Hello {{ username || 'Guest' }}! 👋</h1>
@@ -173,6 +174,8 @@ export function EdgePreviewer() {
             <Zap className={cn("size-3", autoCompile && "fill-current")} />
             Auto
           </button>
+          {/* Docs sidebar */}
+          <DocsSidebar />
 
           {/* Theme toggle */}
           <Button
