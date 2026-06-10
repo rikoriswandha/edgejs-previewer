@@ -29,7 +29,8 @@ A browser-based playground for writing [Edge.js](https://edgejs.dev/) templates 
 | UI Primitives | [@base-ui/react](https://base-ui.com/) + [shadcn/ui](https://ui.shadcn.com/) |
 | Editor | [Monaco Editor](https://microsoft.github.io/monaco-editor/) (via `@monaco-editor/react`) |
 | Template Engine | [Edge.js](https://edgejs.dev/) |
-| Runtime | [Node.js](https://nodejs.org/) ≥ 20 / [Bun](https://bun.sh/) ≥ 1.0 |
+| Browser Runtime | [@scelar/nodepod](https://github.com/ScelarOrg/NodePod) (in-browser Node.js) |
+| Host Runtime | [Node.js](https://nodejs.org/) ≥ 20 / [Bun](https://bun.sh/) ≥ 1.0 |
 | Server | [Express](https://expressjs.com/) (production) |
 
 ---
@@ -58,7 +59,9 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### Development Notes
 
-The Vite dev server uses a custom plugin (`src/plugin/edge-compiler.ts`) to handle Edge.js template compilation at `/api/compile`. This provides fast feedback during development without a separate backend process.
+Template compilation runs entirely inside the browser via [@scelar/nodepod](https://github.com/ScelarOrg/NodePod), an in-browser Node.js runtime. The compiler lives in `src/lib/nodepod-compiler.ts` and spawns a NodePod process that executes `edge.js` against the template, state, and registered components. No backend server is needed during development.
+
+Because NodePod executes inside a browser environment, certain browser globals (for example `window.name`) leak into the global object. Edge.js's parser treats those globals as resolvable identifiers and skips prefixing them with `state.`, which can shadow component props such as `name`. The compiler script sanitizes these globals before booting Edge.js so props resolve correctly.
 
 ---
 
@@ -68,11 +71,9 @@ The Vite dev server uses a custom plugin (`src/plugin/edge-compiler.ts`) to hand
 bun run build
 ```
 
-This generates a static bundle in the `dist/` directory.
-
 ### Running the Production Server
 
-The included Express server serves the built static files and provides the `/api/compile` endpoint required by the app.
+The included Express server serves the built static files. Template compilation runs entirely client-side via NodePod, so the production server only needs to host the static SPA.
 
 ```bash
 bun run start
@@ -119,7 +120,7 @@ docker run -p 3000:3000 edgejs-previewer
 ├── .github/workflows/      # CI/CD workflows
 ├── src/
 │   ├── components/
-│   │   ├── ui/             # shadcn/ui components
+│   │   ├── ui/                   # shadcn/ui components
 │   │   ├── edge-previewer.tsx    # Main playground layout
 │   │   ├── template-editor.tsx   # Edge template Monaco editor
 │   │   ├── state-editor.tsx      # JSON state Monaco editor
@@ -132,9 +133,8 @@ docker run -p 3000:3000 edgejs-previewer
 │   │   ├── use-edge-compiler.ts  # Compile API client
 │   │   ├── use-monaco-theme.ts   # Custom warm editor themes
 │   │   └── use-media-query.ts    # Responsive breakpoint hook
-│   ├── plugin/
-│   │   └── edge-compiler.ts      # Vite dev server plugin
 │   ├── lib/
+│   │   ├── nodepod-compiler.ts   # In-browser Edge.js compiler (NodePod)
 │   │   └── utils.ts              # cn() class merger
 │   ├── App.tsx
 │   ├── main.tsx

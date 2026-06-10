@@ -6,28 +6,33 @@ interface CompileResult {
 }
 
 const COMPILE_SCRIPT = `
+// Workaround: @scelar/nodepod runs Node.js inside the browser, so browser
+// globals like "name" are present on the global object. Edge.js's parser
+// treats these as accessible globals and skips prefixing them with "state.",
+// causing component props like "name" to resolve to the empty global instead
+// of the prop value.
+const BROWSER_GLOBALS = ['name', 'top', 'parent', 'self', 'status'];
+for (const key of BROWSER_GLOBALS) {
+  if (key in global) {
+    try { delete global[key]; } catch (e) { global[key] = undefined; }
+  }
+}
 const { Edge } = require('edge.js');
 const fs = require('fs');
-
 async function main() {
   const edge = new Edge({ cache: false });
-
   const template = fs.readFileSync('/tmp/template.edge', 'utf8');
   edge.registerTemplate('preview', { template });
-
   const componentsRaw = fs.readFileSync('/tmp/components.json', 'utf8');
   const components = JSON.parse(componentsRaw);
   for (const [key, value] of Object.entries(components)) {
     edge.registerTemplate(key, { template: value });
   }
-
   const stateRaw = fs.readFileSync('/tmp/state.json', 'utf8');
   const state = JSON.parse(stateRaw);
-
   const output = await edge.render('preview', state);
   console.log(JSON.stringify({ output }));
 }
-
 main().catch(err => {
   console.error(JSON.stringify({ error: err.message }));
   process.exit(1);
