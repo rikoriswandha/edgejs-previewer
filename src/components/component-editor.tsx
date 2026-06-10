@@ -1,6 +1,6 @@
-import Editor from "@monaco-editor/react";
+import { lazy, Suspense, useCallback } from "react";
 import type { editor } from "monaco-editor";
-import { useCallback } from "react";
+const Editor = lazy(() => import("@monaco-editor/react"));
 import { X } from "lucide-react";
 import { useMonacoTheme } from "@/hooks/use-monaco-theme";
 import { Button } from "@/components/ui/button";
@@ -57,8 +57,9 @@ export function ComponentEditor({
   return (
     <div className="flex flex-col overflow-hidden rounded-lg border bg-code">
       <div className="flex items-center gap-2 border-b px-3 py-1.5">
-        <span className="text-muted-foreground text-xs font-medium">Path</span>
+        <label htmlFor="component-path" className="text-muted-foreground text-xs font-medium">Path</label>
         <input
+          id="component-path"
           type="text"
           value={path}
           onChange={(e) => onPathChange(e.target.value)}
@@ -76,15 +77,17 @@ export function ComponentEditor({
         </Button>
       </div>
       <div className="h-[150px] overflow-hidden">
-        <Editor
-          height="100%"
-          defaultLanguage="html"
-          value={source}
-          onChange={handleChange}
-          onMount={handleMount}
-          theme={isDark ? "edge-warm-dark" : "edge-warm-light"}
-          options={{ automaticLayout: true }}
-        />
+        <Suspense fallback={<div className="h-full animate-pulse rounded bg-muted" />}>
+          <Editor
+            height="100%"
+            defaultLanguage="html"
+            value={source}
+            onChange={handleChange}
+            onMount={handleMount}
+            theme={isDark ? "edge-warm-dark" : "edge-warm-light"}
+            options={{ automaticLayout: true }}
+          />
+        </Suspense>
       </div>
     </div>
   );

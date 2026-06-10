@@ -1,6 +1,6 @@
-import Editor from "@monaco-editor/react";
+import { lazy, Suspense, useCallback } from "react";
 import type { editor } from "monaco-editor";
-import { useCallback } from "react";
+const Editor = lazy(() => import("@monaco-editor/react"));
 import { Check, X } from "lucide-react";
 import { useMonacoTheme } from "@/hooks/use-monaco-theme";
 import { cn } from "@/lib/utils";
@@ -85,15 +85,17 @@ export function StateEditor({ value, onChange, isDark }: StateEditorProps) {
         </div>
       </div>
       <div className="flex-1 overflow-hidden">
-        <Editor
-          height="100%"
-          defaultLanguage="json"
-          value={value}
-          onChange={handleChange}
-          onMount={handleMount}
-          theme={isDark ? "edge-warm-dark" : "edge-warm-light"}
-          options={{ automaticLayout: true }}
-        />
+        <Suspense fallback={<div className="h-full animate-pulse rounded bg-muted" />}>
+          <Editor
+            height="100%"
+            defaultLanguage="json"
+            value={value}
+            onChange={handleChange}
+            onMount={handleMount}
+            theme={isDark ? "edge-warm-dark" : "edge-warm-light"}
+            options={{ automaticLayout: true }}
+          />
+        </Suspense>
       </div>
     </div>
   );

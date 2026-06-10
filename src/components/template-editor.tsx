@@ -1,6 +1,6 @@
-import Editor from "@monaco-editor/react";
+import { lazy, Suspense, useCallback } from "react";
 import type { editor } from "monaco-editor";
-import { useCallback } from "react";
+const Editor = lazy(() => import("@monaco-editor/react"));
 import { useMonacoTheme } from "@/hooks/use-monaco-theme";
 
 interface TemplateEditorProps {
@@ -43,14 +43,16 @@ export function TemplateEditor({ value, onChange, isDark }: TemplateEditorProps)
   );
 
   return (
-    <Editor
-      height="100%"
-      defaultLanguage="html"
-      value={value}
-      onChange={handleChange}
-      onMount={handleMount}
-      theme={isDark ? "edge-warm-dark" : "edge-warm-light"}
-      options={{ automaticLayout: true }}
-    />
+    <Suspense fallback={<div className="h-full animate-pulse rounded bg-muted" />}>
+      <Editor
+        height="100%"
+        defaultLanguage="html"
+        value={value}
+        onChange={handleChange}
+        onMount={handleMount}
+        theme={isDark ? "edge-warm-dark" : "edge-warm-light"}
+        options={{ automaticLayout: true }}
+      />
+    </Suspense>
   );
 }

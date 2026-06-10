@@ -1,10 +1,10 @@
 import { useCallback } from "react";
-import { loader } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
+import type * as monacoEditor from "monaco-editor";
 
 export type MonacoTheme = "edge-warm-light" | "edge-warm-dark";
 
-function defineWarmLightTheme(monaco: typeof import("monaco-editor")) {
+function defineWarmLightTheme(monaco: typeof monacoEditor) {
   monaco.editor.defineTheme("edge-warm-light", {
     base: "vs",
     inherit: true,
@@ -36,7 +36,7 @@ function defineWarmLightTheme(monaco: typeof import("monaco-editor")) {
   });
 }
 
-function defineWarmDarkTheme(monaco: typeof import("monaco-editor")) {
+function defineWarmDarkTheme(monaco: typeof monacoEditor) {
   monaco.editor.defineTheme("edge-warm-dark", {
     base: "vs-dark",
     inherit: true,
@@ -70,25 +70,28 @@ function defineWarmDarkTheme(monaco: typeof import("monaco-editor")) {
 
 let themesInitialized = false;
 
-async function ensureThemes() {
-  if (themesInitialized) return;
+async function ensureThemes(): Promise<typeof monacoEditor> {
+  // Dynamic import: Monaco is a heavy browser-only library that must be
+  // loaded on demand to avoid bloating the initial bundle.
+  const { loader } = await import("@monaco-editor/react");
   const monaco = await loader.init();
-  defineWarmLightTheme(monaco);
-  defineWarmDarkTheme(monaco);
-  themesInitialized = true;
+  if (!themesInitialized) {
+    defineWarmLightTheme(monaco);
+    defineWarmDarkTheme(monaco);
+    themesInitialized = true;
+  }
+  return monaco;
 }
 
 export function useMonacoTheme() {
   const applyTheme = useCallback(
     async (monacoEditor: editor.IStandaloneCodeEditor, isDark: boolean) => {
-      await ensureThemes();
-      const monaco = await loader.init();
+      const monaco = await ensureThemes();
       const themeName: MonacoTheme = isDark ? "edge-warm-dark" : "edge-warm-light";
       monaco.editor.setTheme(themeName);
       monacoEditor.updateOptions({ theme: themeName });
     },
     [],
   );
-
   return { applyTheme };
 }
