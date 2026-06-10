@@ -6,6 +6,7 @@ export interface Preset {
   label: string;
   template: string;
   state: string;
+  components?: { path: string; source: string }[];
 }
 
 export const PRESETS: Preset[] = [
@@ -265,6 +266,77 @@ export const PRESETS: Preset[] = [
   })();
   </script>`,
     state: JSON.stringify({ count: 5 }, null, 2),
+  },
+  {
+    id: "components",
+    label: "Components",
+    template: `<div class="max-w-md space-y-4">
+  <h1 class="text-2xl font-bold text-orange-600">Team Directory</h1>
+  @each(member in team)
+    @!component('components/card', {
+      name: member.name,
+      role: member.role,
+      avatar: member.avatar
+    })
+  @endeach
+</div>`,
+    state: JSON.stringify({
+      team: [
+        { name: "Alice", role: "admin", avatar: "A" },
+        { name: "Bob", role: "editor", avatar: "B" },
+        { name: "Carol", role: "viewer", avatar: "C" },
+      ],
+    }, null, 2),
+    components: [
+      {
+        path: "components/card",
+        source: `<div class="flex items-center gap-3 p-3 bg-white rounded-lg shadow-sm border border-gray-200">
+  <div class="w-10 h-10 bg-orange-200 rounded-full flex items-center justify-center text-sm font-bold text-orange-700">
+    {{ avatar }}
+  </div>
+  <div>
+    <p class="font-semibold text-gray-800">{{ name }}</p>
+    <p class="text-sm text-gray-500">{{ role }}</p>
+  </div>
+</div>`,
+      },
+    ],
+  },
+  {
+    id: "slots",
+    label: "Slots",
+    template: `@component('components/modal', { title: 'Delete Post' })
+  @slot('header')
+    <h2 class="text-lg font-bold text-red-600">⚠ Confirm Deletion</h2>
+  @end
+  @slot('content')
+    <p class="text-gray-600">Are you sure you want to delete this post? This action cannot be undone.</p>
+  @end
+  @slot('footer')
+    <div class="flex gap-2">
+      <button class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+      <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+    </div>
+  @end
+@end`,
+    state: JSON.stringify({}, null, 2),
+    components: [
+      {
+        path: "components/modal",
+        source: `@let(attributes = $props.merge({ class: ['rounded-lg', 'shadow-lg', 'p-6', 'max-w-md', 'mx-auto'] }).toAttrs())
+<div {{ attributes }}>
+  <div class="mb-4 border-b pb-2">
+    {{{ await $slots.header() }}}
+  </div>
+  <div class="mb-4">
+    {{{ await $slots.content() }}}
+  </div>
+  <div class="flex justify-end">
+    {{{ await $slots.footer() }}}
+  </div>
+</div>`,
+      },
+    ],
   },
 ];
 

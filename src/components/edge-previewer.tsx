@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Play, Moon, Sun, Zap } from "lucide-react";
+import { Play, Moon, Sun, Zap, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useEdgeCompiler } from "@/hooks/use-edge-compiler";
@@ -8,6 +8,7 @@ import { StateEditor } from "@/components/state-editor";
 import { OutputPanel } from "@/components/output-panel";
 import { PresetSelector, type Preset } from "@/components/preset-selector";
 import { StatusBar } from "@/components/status-bar";
+import { ComponentEditor } from "@/components/component-editor";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_TEMPLATE = `<h1 class="text-3xl font-bold text-orange-600">Hello {{ username || 'Guest' }}! 👋</h1>
@@ -57,7 +58,6 @@ function useDebouncedCallback<T extends (...args: unknown[]) => void>(
     [callback, delay],
   );
 }
-
 export function EdgePreviewer() {
   const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
   const [stateText, setStateText] = useState(DEFAULT_STATE);
@@ -66,8 +66,8 @@ export function EdgePreviewer() {
   const [isDark, setIsDark] = useState(false);
   const [autoCompile, setAutoCompile] = useState(true);
   const [compileStatus, setCompileStatus] = useState<"idle" | "compiling" | "success" | "error">("idle");
+  const [components, setComponents] = useState<{ path: string; source: string }[]>([]);
   const { compile, output, error, isCompiling } = useEdgeCompiler();
-
   const handleCompile = useCallback(() => {
     let state: Record<string, unknown> = {};
     try {
@@ -75,29 +75,21 @@ export function EdgePreviewer() {
     } catch {
       return;
     }
-    void compile(template, state);
-  }, [compile, template, stateText]);
+    const componentsMap = Object.fromEntries(
+      components.filter((c) => c.source.trim()).map((c) => [c.path, c.source]),
+    );
+    void compile(template, state, componentsMap);
+  }, [compile, template, stateText, components]);
 
   const debouncedCompile = useDebouncedCallback(handleCompile, 400);
 
+  const componentsKey = JSON.stringify(components);
   useEffect(() => {
     if (autoCompile && stateValid) {
       setCompileStatus("compiling");
       debouncedCompile();
     }
-  }, [template, stateText, stateValid, autoCompile, debouncedCompile]);
-
-  useEffect(() => {
-    if (isCompiling) {
-      setCompileStatus("compiling");
-    } else if (error) {
-      setCompileStatus("error");
-    } else if (output) {
-      setCompileStatus("success");
-    } else {
-      setCompileStatus("idle");
-    }
-  }, [isCompiling, error, output]);
+  }, [template, stateText, stateValid, autoCompile, debouncedCompile, componentsKey]);
 
   // Keyboard shortcut: Cmd/Ctrl + Enter to compile
   useEffect(() => {
@@ -116,8 +108,27 @@ export function EdgePreviewer() {
     setTemplate(preset.template.trim());
     setStateText(preset.state);
     setStateValid(true);
+    setComponents(preset.components ?? []);
   }, []);
-
+  const addComponent = useCallback(() => {
+    setComponents((prev) => [
+      ...prev,
+      { path: `components/${prev.length + 1}`, source: "" },
+    ]);
+  }, []);
+  const removeComponent = useCallback((index: number) => {
+    setComponents((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+  const updateComponentPath = useCallback((index: number, path: string) => {
+    setComponents((prev) =>
+      prev.map((c, i) => (i === index ? { ...c, path } : c)),
+    );
+  }, []);
+  const updateComponentSource = useCallback((index: number, source: string) => {
+    setComponents((prev) =>
+      prev.map((c, i) => (i === index ? { ...c, source } : c)),
+    );
+  }, []);
   const toggleTheme = useCallback(() => {
     setIsDark((prev) => {
       const next = !prev;
@@ -129,7 +140,6 @@ export function EdgePreviewer() {
       return next;
     });
   }, []);
-
   return (
     <div className={cn("flex h-screen flex-col overflow-hidden", isDark && "dark")}>
       {/* Header */}
@@ -219,6 +229,40 @@ export function EdgePreviewer() {
                 }}
                 isDark={isDark}
               />
+            </div>
+          </div>
+          <Separator />
+          {/* Components section */}
+          <div className="flex flex-col overflow-auto">
+            <div className="flex items-center justify-between px-4 pt-2 pb-1">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground text-xs font-medium">Components</span>
+                <span className="text-muted-foreground/60 hidden text-[10px] sm:inline">
+                  Use @component("path") or @!component("path")
+                </span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={addComponent}
+                className="h-6 gap-1 text-xs"
+              >
+                <Plus className="size-3" />
+                Add
+              </Button>
+            </div>
+            <div className="mx-4 mb-3 space-y-2">
+              {components.map((component, index) => (
+                <ComponentEditor
+                  key={index}
+                  path={component.path}
+                  onPathChange={(path) => updateComponentPath(index, path)}
+                  source={component.source}
+                  onSourceChange={(source) => updateComponentSource(index, source)}
+                  onRemove={() => removeComponent(index)}
+                  isDark={isDark}
+                />
+              ))}
             </div>
           </div>
         </div>

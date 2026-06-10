@@ -5,6 +5,7 @@ import { Edge } from "edge.js";
 interface CompileRequest {
   template: string;
   state: Record<string, unknown>;
+  components?: Record<string, string>;
 }
 
 function readBody(req: IncomingMessage): Promise<string> {
@@ -48,7 +49,11 @@ export function edgeCompilerPlugin(): Plugin {
           edge.registerTemplate(templateName, {
             template: request.template,
           });
-
+          if (request.components) {
+            for (const [key, value] of Object.entries(request.components)) {
+              edge.registerTemplate(key, { template: value });
+            }
+          }
           const output = await edge.render(templateName, request.state);
           const response = { output };
           res.setHeader("Content-Type", "application/json");
