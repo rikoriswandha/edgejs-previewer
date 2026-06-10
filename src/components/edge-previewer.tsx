@@ -65,9 +65,15 @@ export function EdgePreviewer() {
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(false);
   const [autoCompile, setAutoCompile] = useState(true);
-  const [compileStatus, setCompileStatus] = useState<"idle" | "compiling" | "success" | "error">("idle");
-  const [components, setComponents] = useState<{ path: string; source: string }[]>([]);
   const { compile, output, error, isCompiling } = useEdgeCompiler();
+  const compileStatus: "idle" | "compiling" | "success" | "error" = isCompiling
+    ? "compiling"
+    : error
+      ? "error"
+      : output
+        ? "success"
+        : "idle";
+  const [components, setComponents] = useState<{ path: string; source: string }[]>([]);
   const handleCompile = useCallback(() => {
     let state: Record<string, unknown> = {};
     try {
@@ -86,7 +92,6 @@ export function EdgePreviewer() {
   const componentsKey = JSON.stringify(components);
   useEffect(() => {
     if (autoCompile && stateValid) {
-      setCompileStatus("compiling");
       debouncedCompile();
     }
   }, [template, stateText, stateValid, autoCompile, debouncedCompile, componentsKey]);
