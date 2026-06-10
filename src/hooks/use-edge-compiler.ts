@@ -31,9 +31,22 @@ export function useEdgeCompiler(): UseEdgeCompilerReturn {
             ...(components && Object.keys(components).length > 0 ? { components } : {}),
           }),
         });
-
-        const result = (await response.json()) as CompileResult;
-
+        const contentType = response.headers.get("content-type") ?? "";
+        if (!contentType.includes("application/json")) {
+          if (!response.ok) {
+            throw new Error(
+              `Server returned ${response.status} ${response.statusText}. ` +
+                `The /api/compile endpoint is not available — compilation only works in development with the Vite dev server.`,
+            );
+          }
+          throw new Error("Server returned non-JSON response.");
+        }
+        let result: CompileResult;
+        try {
+          result = (await response.json()) as CompileResult;
+        } catch {
+          throw new Error("Failed to parse server response as JSON.");
+        }
         if (!response.ok || result.error) {
           setError(result.error ?? "Unknown compilation error");
           setOutput(null);
